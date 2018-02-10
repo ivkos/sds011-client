@@ -5,14 +5,7 @@
  * @ignore
  */
 module.exports.addChecksumToCommandArray = function addChecksumToCommandArray(command) {
-    let checksum = 0;
-
-    // Calculate checksum for DATA1 - DATA14 range
-    for (let i = 2; i <= 16; i++)
-        checksum += command[i];
-
-    checksum = checksum % 256;
-    command[17] = checksum;
+    command[17] = calculateChecksum(command, 2, 16);
 }
 
 /**
@@ -59,14 +52,11 @@ function verifyHeaderAndTail(packet) {
  * @ignore
  */
 function isChecksumValid(packet, checksumByteOffset, dataStartOffset, dataEndOffset) {
-    const targetChecksum = packet[checksumByteOffset];
-    let calculatedChecksum = 0;
+    return packet[checksumByteOffset] === calculateChecksum(packet, dataStartOffset, dataEndOffset);
+}
 
-    for (let i = dataStartOffset; i <= dataEndOffset; i++) {
-        calculatedChecksum += packet[i];
-    }
-
-    calculatedChecksum = calculatedChecksum % 256;
-
-    return calculatedChecksum === targetChecksum;
+function calculateChecksum(buf, start, end) {
+    return buf
+        .slice(start, end + 1)
+        .reduce((r, v) => (r + v) & 0xFF, 0);
 }
