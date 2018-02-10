@@ -24,6 +24,7 @@ class SDS011Client extends EventEmitter
         this._port = new SerialPort(portPath, { baudRate: 9600 });
         this._state = new SensorState();
 
+        this._buf = Buffer.allocUnsafe(0);
         this._commandQueue = [];
         this._isCurrentlyProcessing = false;
         this._retryCount = 0;
@@ -35,25 +36,7 @@ class SDS011Client extends EventEmitter
         /**
          * Listen for incoming data and react: change internal state so queued commands know that they were completed or emit data.
          */
-        this._port.on('data', (data) => {
-            if (PacketUtils.verifyPacket(data)) {
-                const sender = data[1]; // Byte offset 1 is command sender
-
-                switch (sender) {
-                    case Constants.SENDER_SENSOR_READING:
-                        PacketHandlers.handle0xC0(data, this._state);
-                        this.emit('reading', new SensorReading(this._state.pm2p5, this._state.pm10));
-                        break;
-
-                    case Constants.SENDER_SENSOR_CONFIG:
-                        PacketHandlers.handle0xC5(data, this._state);
-                        break;
-
-                    default:
-                        throw new Error('Unknown packet sender: ' + sender);
-                }
-            }
-        });
+        this._port.on('data', buf => this._handleSerialInput(buf));
 
         // Queue first command to "warm-up" the connection and command queue
         this.query();
@@ -470,7 +453,7 @@ class SDS011Client extends EventEmitter
         if (++this._retryCount > ALLOWED_RETRIES) {
             const faultyCommand = this._commandQueue.shift();
 
-            faultyCommand.failureCallback(); // Let the world know
+            faultyCommand.failureCallback(new Error("Command failed")); // Let the world know
             this._retryCount = 0;
 
             this._processCommands(); // Move to the next command
@@ -499,6 +482,81 @@ class SDS011Client extends EventEmitter
         }
     }
 
+    _handleSerialInput(buf) {
+        this.emit('serial_input', buf);
+
+        this._buf = Buffer.concat([this._buf, buf]);
+
+        while (this._buf.length >= 10) {
+            const start = this._buf.indexOf(Constants.MSG_HEAD);
+
+            if (start === -1) {
+                this._trimBufLeft(this._buf.length);
+                continue;
+            }
+
+            if (start > 0) {
+                this._trimBufLeft(start);
+                continue;
+            }
+
+            const end = this._buf.indexOf(Constants.MSG_TAIL, start + 9);
+
+            if (end === -1) {
+                this._trimBufLeft(10);
+                continue;
+            }
+
+            if (end - start !== 9) {
+                this._trimBufLeft(start + 10);
+                continue;
+            }
+
+            const msgBuf = Buffer.allocUnsafe(end - start + 1);
+            this._buf.copy(msgBuf, 0, start, end + 1);
+            this._trimBufLeft(10 + start);
+
+            if (!PacketUtils.verifyPacket(msgBuf)) {
+                const err = new Error("Received invalid packet");
+                err.buf = msgBuf;
+                this.emit('packet_error', err);
+                continue;
+            }
+
+            this._handlePacket(msgBuf);
+        }
+    }
+
+    _trimBufLeft(len) {
+        if (len <= 0) return;
+
+        if (len >= this._buf.length) {
+            this._buf = Buffer.allocUnsafe(0);
+            return;
+        }
+
+        const newBuf = Buffer.allocUnsafe(this._buf.length - len);
+        this._buf.copy(newBuf, 0, len);
+        this._buf = newBuf;
+    }
+
+    _handlePacket(buf) {
+        const sender = buf[1];
+
+        switch (sender) {
+            case Constants.SENDER_SENSOR_READING:
+                PacketHandlers.handle0xC0(buf, this._state);
+                this.emit('reading', new SensorReading(this._state.pm2p5, this._state.pm10));
+                break;
+
+            case Constants.SENDER_SENSOR_CONFIG:
+                PacketHandlers.handle0xC5(buf, this._state);
+                break;
+
+            default:
+                throw new Error('Unknown packet sender: ' + sender);
+        }
+    }
 }
 
 module.exports = SDS011Client;
