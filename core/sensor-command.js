@@ -4,7 +4,7 @@
  *
  * @ignore
  */
-module.exports = class SensorCommand
+class SensorCommand
 {
     constructor(sensor, successCallback, failureCallback, prepare, execute, isFullfilled) {
         this.sensor = sensor;
@@ -14,4 +14,6 @@ module.exports = class SensorCommand
         this.execute = execute; // do the actual work - build binary command and send it to the sensor
         this.isFullfilled = isFullfilled; // if this function returns 'false' the command will be retried - up to ${ALLOWED_RETRIES} times. Mostly watches internal state for changes.
     }
-};
+}
+
+module.exports = SensorCommand;

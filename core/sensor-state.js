@@ -3,7 +3,7 @@
  *
  * @ignore
  */
-module.exports = class SensorState
+class SensorState
 {
     constructor() {
         this.workingPeriod = undefined;
@@ -14,4 +14,6 @@ module.exports = class SensorState
         this.pm10 = undefined;
         this.closed = false;
     }
-};
+}
+
+module.exports = SensorState;
