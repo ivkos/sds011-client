@@ -1,5 +1,5 @@
-const PacketUtils = require("./packet-utils");
-const Constants = require("./constants");
+const PacketUtils = require("./PacketUtils");
+const Constants = require("./Constants");
 
 class CommandBuilder
 {

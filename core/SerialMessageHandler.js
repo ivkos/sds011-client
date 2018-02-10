@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
-const Constants = require("./constants");
-const PacketUtils = require("./packet-utils");
+const Constants = require("./Constants");
+const PacketUtils = require("./PacketUtils");
 
 class SerialMessageHandler extends EventEmitter
 {

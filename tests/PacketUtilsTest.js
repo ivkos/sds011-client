@@ -1,5 +1,5 @@
 const assert = require('assert');
-const PacketUtils = require("../core/packet-utils.js");
+const PacketUtils = require("../core/PacketUtils.js");
 
 describe('Packet utiliites', function () {
     it('Rejects packet with wrong size - empty packet', function () {

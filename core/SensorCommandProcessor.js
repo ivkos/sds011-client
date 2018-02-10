@@ -1,9 +1,9 @@
-const SensorCommand = require('./sensor-command');
+const SensorCommand = require('./SensorCommand');
 
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request.
 const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.
 
-class CommandProcessor
+class SensorCommandProcessor
 {
     constructor() {
         this._queue = [];
@@ -68,4 +68,4 @@ class CommandProcessor
     }
 }
 
-module.exports = CommandProcessor;
+module.exports = SensorCommandProcessor;
