@@ -1,27 +1,27 @@
-SDS011-Wrapper
+SDS011 Client for Node.js
 =========
-[![Build Status](https://travis-ci.org/triforcely/sds011-wrapper.svg?branch=master)](https://travis-ci.org/triforcely/sds011-wrapper)  [![Codecov](https://img.shields.io/codecov/c/github/triforcely/sds011-wrapper.svg)](https://codecov.io/gh/triforcely/sds011-wrapper)
+[![Build Status](https://travis-ci.org/ivkos/sds011-client.svg?branch=master)](https://travis-ci.org/ivkos/sds011-client)  [![Codecov](https://img.shields.io/codecov/c/github/ivkos/sds011-client.svg)](https://codecov.io/gh/ivkos/sds011-client)
 
 
-Air quality measurements made easy with wrapper library for SDS011 UART interface.
+Air quality measurements made easy with client library for SDS011 UART interface.
 
 Save your time and focus on specific IoT solution instead of serial communication.
 
-[![NPM](https://nodei.co/npm/sds011-wrapper.png)](https://npmjs.org/package/sds011-wrapper)
+[![NPM](https://nodei.co/npm/sds011-client.png)](https://npmjs.org/package/sds011-client)
 
 ## Watch out!
 
-Nova Fitness SDS011 laser is designed for 8000 hours of continuous use - this is less than one year. It is recommended to configure [working period](https://github.com/triforcely/sds011-wrapper/wiki/API#SDS011Wrapper+setWorkingPeriod) to extend life span of your solution.
+Nova Fitness SDS011 laser is designed for 8000 hours of continuous use - this is less than one year. It is recommended to configure [working period](https://github.com/ivkos/sds011-client/wiki/API#SDS011Client+setWorkingPeriod) to extend life span of your solution.
 
 ## Synopsis
 
 1. Require the module
 ```js
-const SDS011Wrapper = require("sds011-wrapper");
+const SDS011Client = require("sds011-client");
 ```
 2. Connect to your sensor through serial port
 ```js
-const sensor = new SDS011Wrapper("COM5");
+const sensor = new SDS011Client("COM5");
 ```
 3. Configure
 ```js
@@ -44,12 +44,12 @@ sensor.on('measure', (data) => {
 
 ## Installation
 
-  `npm install sds011-wrapper`
+  `npm install sds011-client`
 
 ## Usage
 
 - Check the 'examples' folder.
-- See the [API docs](https://github.com/triforcely/sds011-wrapper/wiki/API)
+- See the [API docs](https://github.com/ivkos/sds011-client/wiki/API)
 
 ## Contributors
 

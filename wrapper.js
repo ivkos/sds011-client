@@ -12,7 +12,7 @@ const PacketHandlers = require("./core/packet-handlers.js");
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request. 
 const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.
 
-class SDS011Wrapper extends EventEmitter {
+class SDS011Client extends EventEmitter {
 
     /**
      * Open sensor.
@@ -486,4 +486,4 @@ class SDS011Wrapper extends EventEmitter {
 
 }
 
-module.exports = SDS011Wrapper;
+module.exports = SDS011Client;
