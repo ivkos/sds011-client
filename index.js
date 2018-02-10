@@ -122,8 +122,14 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithReadings.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolveWithReadings.bind(resolveContext),
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
@@ -169,8 +175,14 @@ class SDS011Client extends EventEmitter
         };
 
         return new Promise((resolve, reject) => {
-            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolve,
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
@@ -217,8 +229,14 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithMode.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolveWithMode.bind(resolveContext),
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
@@ -261,8 +279,14 @@ class SDS011Client extends EventEmitter
         };
 
         return new Promise((resolve, reject) => {
-            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolve,
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
@@ -309,8 +333,14 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithFirmwareVersion.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolveWithFirmwareVersion.bind(resolveContext),
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
@@ -356,8 +386,14 @@ class SDS011Client extends EventEmitter
         };
 
         return new Promise((resolve, reject) => {
-            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolve,
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
@@ -404,8 +440,14 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithTime.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
-            this._enqueueCommand(command);
+            this._enqueueCommand(new SensorCommand(
+                port,
+                resolveWithTime.bind(resolveContext),
+                reject,
+                prepare.bind(prepareContext),
+                execute.bind(executeContext),
+                isFullfilled.bind(isFullfilledContext)
+            ));
         });
     }
 
