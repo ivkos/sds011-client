@@ -1,20 +1,17 @@
 const SerialPort = require('serialport');
 const EventEmitter = require('events');
-
 const SensorState = require("./core/sensor-state.js");
 const SensorCommand = require("./core/sensor-command.js");
-
-const addChecksumToCommandArray = require("./core/packet-utils.js").addChecksumToCommandArray;
-const verifyPacket = require("./core/packet-utils.js").verifyPacket;
-
 const PacketHandlers = require("./core/packet-handlers.js");
+const CommandBuilder = require("./core/command-builder");
+const Constants = require("./core/constants");
+const PacketUtils = require("./core/packet-utils");
 
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request. 
 const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.
 
 class SDS011Client extends EventEmitter
 {
-
     /**
      * Open sensor.
      *
@@ -38,22 +35,23 @@ class SDS011Client extends EventEmitter
          * Listen for incoming data and react: change internal state so queued commands know that they were completed or emit data.
          */
         this._port.on('data', (data) => {
-            if (verifyPacket(data)) {
-                const type = data[1]; // Byte offset 1 is command type
+            if (PacketUtils.verifyPacket(data)) {
+                const sender = data[1]; // Byte offset 1 is command sender
 
-                switch (type) {
-                    case 0xC0:
+                switch (sender) {
+                    case Constants.SENDER_SENSOR_READING:
                         PacketHandlers.handle0xC0(data, this._state);
 
                         if (this._state.mode === 'active')
                             this.emit('measure', { 'PM2.5': this._state.pm2p5, 'PM10': this._state.pm10 });
                         break;
 
-                    case 0xC5:
+                    case Constants.SENDER_SENSOR_CONFIG:
                         PacketHandlers.handle0xC5(data, this._state);
                         break;
+
                     default:
-                        throw new Error('Unknown packet type: ' + type);
+                        throw new Error('Unknown packet sender: ' + sender);
                 }
             }
         });
@@ -97,12 +95,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-            this.port.write(Buffer.from(command));
+            this.port.write(CommandBuilder.query());
         }
 
         const executeContext = {
@@ -117,7 +110,7 @@ class SDS011Client extends EventEmitter
             state: state
         };
 
-        return new Promise((resolve, reject, onCancel) => {
+        return new Promise((resolve, reject) => {
             function resolveWithReadings() {
                 resolve({
                     'PM2.5': this.state.pm2p5,
@@ -129,7 +122,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithReadings.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+            const command = new SensorCommand(port, resolveWithReadings.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
@@ -158,12 +151,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 2, 1, this.mode === 'active' ? 0 : 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-            this.port.write(Buffer.from(command));
+            this.port.write(CommandBuilder.setReportingMode(mode === 'active'));
         }
 
         const executeContext = {
@@ -180,8 +168,8 @@ class SDS011Client extends EventEmitter
             setMode: mode
         };
 
-        return new Promise((resolve, reject, onCancel) => {
-            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+        return new Promise((resolve, reject) => {
+            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
@@ -205,12 +193,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-            this.port.write(Buffer.from(command));
+            this.port.write(CommandBuilder.getReportingMode());
         }
 
         const executeContext = {
@@ -225,7 +208,7 @@ class SDS011Client extends EventEmitter
             state: this._state
         };
 
-        return new Promise((resolve, reject, onCancel) => {
+        return new Promise((resolve, reject) => {
             function resolveWithMode() {
                 resolve(this.state.mode);
             }
@@ -234,7 +217,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithMode.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+            const command = new SensorCommand(port, resolveWithMode.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
@@ -260,12 +243,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 6, 1, shouldSleep ? 0 : 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-            this.port.write(Buffer.from(command));
+            this.port.write(CommandBuilder.setPower(!shouldSleep));
         }
 
         const executeContext = {
@@ -282,8 +260,8 @@ class SDS011Client extends EventEmitter
             shouldSleep: shouldSleep
         };
 
-        return new Promise((resolve, reject, onCancel) => {
-            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+        return new Promise((resolve, reject) => {
+            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
@@ -307,12 +285,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-            this.port.write(Buffer.from(command));
+            this.port.write(CommandBuilder.getFirmware());
         }
 
         const executeContext = {
@@ -327,7 +300,7 @@ class SDS011Client extends EventEmitter
             state: this._state
         };
 
-        return new Promise((resolve, reject, onCancel) => {
+        return new Promise((resolve, reject) => {
             function resolveWithFirmwareVersion() {
                 resolve(this.state.firmware);
             }
@@ -336,7 +309,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithFirmwareVersion.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+            const command = new SensorCommand(port, resolveWithFirmwareVersion.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
@@ -365,13 +338,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 8, 1, this.time, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-
-            this.port.write(Buffer.from(command)); // Send the command to the sensor
+            this.port.write(CommandBuilder.setPeriod(time));
         }
 
         const executeContext = {
@@ -388,8 +355,8 @@ class SDS011Client extends EventEmitter
             setPeriod: time
         };
 
-        return new Promise((resolve, reject, onCancel) => {
-            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+        return new Promise((resolve, reject) => {
+            const command = new SensorCommand(port, resolve, reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
@@ -413,12 +380,7 @@ class SDS011Client extends EventEmitter
         };
 
         function execute() {
-            const command = [
-                0xAA, 0xB4, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
-            ];
-
-            addChecksumToCommandArray(command);
-            this.port.write(Buffer.from(command)); // Send the command to the sensor
+            this.port.write(CommandBuilder.getPeriod());
         }
 
         const executeContext = {
@@ -433,7 +395,7 @@ class SDS011Client extends EventEmitter
             state: this._state
         };
 
-        return new Promise((resolve, reject, onCancel) => {
+        return new Promise((resolve, reject) => {
             function resolveWithTime() {
                 resolve(this.state.workingPeriod);
             }
@@ -442,7 +404,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            const command = new SensorCommand(port, resolveWithTime.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext))
+            const command = new SensorCommand(port, resolveWithTime.bind(resolveContext), reject, prepare.bind(prepareContext), execute.bind(executeContext), isFullfilled.bind(isFullfilledContext));
             this._enqueueCommand(command);
         });
     }
