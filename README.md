@@ -33,8 +33,8 @@ Promise
 ```
 4. Do awesome things
 ```js
-sensor.on('measure', (data) => {
-    if (data['PM2.5'] > 10) {
+sensor.on('reading', r => {
+    if (r.pm2p5 > 10) {
         powerAirPurifierOn();
     } else {
         powerAirPurifierOff();

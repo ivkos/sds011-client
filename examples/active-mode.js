@@ -13,7 +13,7 @@ sensor
         console.log("\nSensor readings:");
 
         // Since working period was set to 0 and mode was set to active, this event will be emitted as soon as new data is received.
-        sensor.on('measure', (data) => {
+        sensor.on('reading', (data) => {
             console.log(`[${new Date().toISOString()}] ${JSON.stringify(data)}`);
         });
     });
