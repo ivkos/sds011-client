@@ -5,7 +5,7 @@ const SensorCommand = require("./core/sensor-command.js");
 const PacketHandlers = require("./core/packet-handlers.js");
 const CommandBuilder = require("./core/command-builder");
 const Constants = require("./core/constants");
-const PacketUtils = require("./core/packet-utils");
+const SerialMessageHandler = require('./core/serial-message-handler');
 const SensorReading = require('./core/sensor-reading');
 
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request. 
@@ -23,20 +23,20 @@ class SDS011Client extends EventEmitter
 
         this._port = new SerialPort(portPath, { baudRate: 9600 });
         this._state = new SensorState();
+        this._serialMessageHandler = new SerialMessageHandler();
 
-        this._buf = Buffer.allocUnsafe(0);
         this._commandQueue = [];
         this._isCurrentlyProcessing = false;
         this._retryCount = 0;
 
-        this._port.on('error', function (err) {
-            console.log('Error: ', err.message);
-        });
+        this._port
+            .on('error', err => this.emit('error', err))
+            .on('data', buf => this._serialMessageHandler.push(buf));
 
-        /**
-         * Listen for incoming data and react: change internal state so queued commands know that they were completed or emit data.
-         */
-        this._port.on('data', buf => this._handleSerialInput(buf));
+        this._serialMessageHandler
+            .on('message', buf => this._handleMessage(buf))
+            .on('message', buf => this.emit('message', buf))
+            .on('message_error', err => this.emit('message_error', err));
 
         // Queue first command to "warm-up" the connection and command queue
         this.query();
@@ -482,65 +482,7 @@ class SDS011Client extends EventEmitter
         }
     }
 
-    _handleSerialInput(buf) {
-        this.emit('serial_input', buf);
-
-        this._buf = Buffer.concat([this._buf, buf]);
-
-        while (this._buf.length >= 10) {
-            const start = this._buf.indexOf(Constants.MSG_HEAD);
-
-            if (start === -1) {
-                this._trimBufLeft(this._buf.length);
-                continue;
-            }
-
-            if (start > 0) {
-                this._trimBufLeft(start);
-                continue;
-            }
-
-            const end = this._buf.indexOf(Constants.MSG_TAIL, start + 9);
-
-            if (end === -1) {
-                this._trimBufLeft(10);
-                continue;
-            }
-
-            if (end - start !== 9) {
-                this._trimBufLeft(start + 10);
-                continue;
-            }
-
-            const msgBuf = Buffer.allocUnsafe(end - start + 1);
-            this._buf.copy(msgBuf, 0, start, end + 1);
-            this._trimBufLeft(10 + start);
-
-            if (!PacketUtils.verifyPacket(msgBuf)) {
-                const err = new Error("Received invalid packet");
-                err.buf = msgBuf;
-                this.emit('packet_error', err);
-                continue;
-            }
-
-            this._handlePacket(msgBuf);
-        }
-    }
-
-    _trimBufLeft(len) {
-        if (len <= 0) return;
-
-        if (len >= this._buf.length) {
-            this._buf = Buffer.allocUnsafe(0);
-            return;
-        }
-
-        const newBuf = Buffer.allocUnsafe(this._buf.length - len);
-        this._buf.copy(newBuf, 0, len);
-        this._buf = newBuf;
-    }
-
-    _handlePacket(buf) {
+    _handleMessage(buf) {
         const sender = buf[1];
 
         switch (sender) {
