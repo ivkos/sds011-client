@@ -1,7 +1,8 @@
 const PacketUtils = require("./packet-utils");
 const Constants = require("./constants");
 
-class CommandBuilder {
+class CommandBuilder
+{
     static makeCommand(sensorId, sender, type, mode, arg) {
         const buf = Buffer.alloc(19);
         const idBuf = PacketUtils.calculateSensorIdBufFromString(sensorId);
@@ -46,7 +47,7 @@ class CommandBuilder {
             sensorId,
             Constants.SENDER_PC,
             Constants.CMD_PMU_MODE,
-            Constants.MODE_GET,
+            Constants.MODE_GET
         );
     }
 
@@ -74,7 +75,7 @@ class CommandBuilder {
             sensorId,
             Constants.SENDER_PC,
             Constants.CMD_PERIOD,
-            Constants.MODE_GET,
+            Constants.MODE_GET
         )
     }
 
