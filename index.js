@@ -80,11 +80,11 @@ class SDS011Client extends EventEmitter
             port: port
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return (this.state.pm2p5 !== undefined) && (this.state.pm10 !== undefined);
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: state
         };
 
@@ -103,7 +103,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }
@@ -140,11 +140,11 @@ class SDS011Client extends EventEmitter
             mode: mode
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return this.state.mode === this.setMode;
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: this._state,
             setMode: mode
         };
@@ -156,7 +156,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }
@@ -187,11 +187,11 @@ class SDS011Client extends EventEmitter
             port: port
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return this.state.mode !== undefined;
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: this._state
         };
 
@@ -210,7 +210,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }
@@ -244,11 +244,11 @@ class SDS011Client extends EventEmitter
             shouldSleep: shouldSleep
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return this.state.isSleeping === this.shouldSleep;
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: this._state,
             shouldSleep: shouldSleep
         };
@@ -260,7 +260,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }
@@ -291,11 +291,11 @@ class SDS011Client extends EventEmitter
             port: port
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return this.state.firmware !== undefined;
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: this._state
         };
 
@@ -314,7 +314,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }
@@ -351,11 +351,11 @@ class SDS011Client extends EventEmitter
             time: time
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return this.state.workingPeriod === this.setPeriod;
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: this._state,
             setPeriod: time
         };
@@ -367,7 +367,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }
@@ -398,11 +398,11 @@ class SDS011Client extends EventEmitter
             port: port
         };
 
-        function isFullfilled() {
+        function isFulfilled() {
             return this.state.workingPeriod !== undefined;
         }
 
-        const isFullfilledContext = {
+        const isFulfilledContext = {
             state: this._state
         };
 
@@ -421,7 +421,7 @@ class SDS011Client extends EventEmitter
                 reject,
                 prepare.bind(prepareContext),
                 execute.bind(executeContext),
-                isFullfilled.bind(isFullfilledContext)
+                isFulfilled.bind(isFulfilledContext)
             ));
         });
     }

@@ -6,13 +6,13 @@
  */
 class SensorCommand
 {
-    constructor(sensor, successCallback, failureCallback, prepare, execute, isFullfilled) {
+    constructor(sensor, successCallback, failureCallback, prepare, execute, isFulfilled) {
         this.sensor = sensor;
         this.successCallback = successCallback; // called when command was sent and confirmed - in most cases promise's resolve function
         this.failureCallback = failureCallback; // called when command execution was not confirmed - in most cases promise's reject function
         this.prepare = prepare; // called before running first 'execute()' - most of the time clears existing state
         this.execute = execute; // do the actual work - build binary command and send it to the sensor
-        this.isFullfilled = isFullfilled; // if this function returns 'false' the command will be retried - up to ${ALLOWED_RETRIES} times. Mostly watches internal state for changes.
+        this.isFulfilled = isFulfilled; // if this function returns 'false' the command will be retried - up to ${ALLOWED_RETRIES} times. Mostly watches internal state for changes.
     }
 }
 

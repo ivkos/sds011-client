@@ -46,8 +46,7 @@ class SensorCommandProcessor
         }
 
         if (this._queue.length > 0) {
-            if (cmd.isFullfilled()) {
-
+            if (cmd.isFulfilled()) {
                 this._queue.shift(); // Fully processed, remove from the queue.
                 this._retryCount = 0;
 
