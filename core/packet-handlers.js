@@ -23,15 +23,13 @@ module.exports.handle0xC5 = (data, state) => {
     switch (setting) {
         case 2: // Response to "get/set mode" command
         {
-            const res = data[4];
-            state.mode = (res === 0 ? 'active' : 'query');
+            state.mode = (data[4] === 0 ? 'active' : 'query');
             break;
         }
 
         case 6: // Response to "get/set sleep mode" command
         {
-            const res = data[4];
-            state.isSleeping = (res === 0);
+            state.isSleeping = (data[4] === 0);
             break;
         }
 
