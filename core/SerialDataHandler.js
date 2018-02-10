@@ -2,7 +2,7 @@ const EventEmitter = require('events');
 const Constants = require("./Constants");
 const PacketUtils = require("./PacketUtils");
 
-class SerialMessageHandler extends EventEmitter
+class SerialDataHandler extends EventEmitter
 {
     constructor() {
         super();
@@ -68,4 +68,4 @@ class SerialMessageHandler extends EventEmitter
     }
 }
 
-module.exports = SerialMessageHandler;
+module.exports = SerialDataHandler;

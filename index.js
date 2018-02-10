@@ -5,7 +5,7 @@ const SensorCommand = require("./core/SensorCommand.js");
 const PacketHandlers = require("./core/PacketHandler.js");
 const CommandBuilder = require("./core/CommandBuilder");
 const Constants = require("./core/Constants");
-const SerialMessageHandler = require('./core/SerialMessageHandler');
+const SerialDataHandler = require('./core/SerialDataHandler');
 const SensorReading = require('./core/SensorReading');
 const SensorCommandProcessor = require('./core/SensorCommandProcessor');
 
@@ -21,15 +21,15 @@ class SDS011Client extends EventEmitter
 
         this._port = new SerialPort(portPath, { baudRate: 9600 });
         this._state = new SensorState();
-        this._serialMessageHandler = new SerialMessageHandler();
+        this._serialDataHandler = new SerialDataHandler();
         this._commandProcessor = new SensorCommandProcessor();
 
         this._port
             .on(Constants.EVENT_ERROR, err => this.emit(Constants.EVENT_ERROR, err))
             .on('data', buf => this.emit(Constants.EVENT_SERIAL_DATA, buf))
-            .on('data', buf => this._serialMessageHandler.push(buf));
+            .on('data', buf => this._serialDataHandler.push(buf));
 
-        this._serialMessageHandler
+        this._serialDataHandler
             .on(Constants.EVENT_MESSAGE, buf => this.emit(Constants.EVENT_MESSAGE, buf))
             .on(Constants.EVENT_MESSAGE, buf => this._handleMessage(buf))
             .on(Constants.EVENT_MESSAGE_ERROR, err => this.emit(Constants.EVENT_MESSAGE_ERROR, err));
