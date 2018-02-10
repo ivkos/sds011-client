@@ -73,4 +73,14 @@ describe('Message utiliites', function () {
 
         assert.equal(res, false);
     });
+
+    it('Returns generic sensor ID when one is not supplied', function() {
+       const result = MessageUtils.calculateSensorIdBufFromString();
+       assert.ok(result.equals(Buffer.from([0xFF, 0xFF])));
+    });
+
+    it('Parses sensor ID correctly', function() {
+        const result = MessageUtils.calculateSensorIdBufFromString("cafe");
+        assert.ok(result.equals(Buffer.from([0xCA, 0xFE])));
+    });
 });
