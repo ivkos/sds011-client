@@ -1,9 +1,10 @@
 /**
-  * Internal state of the sensor.
-  *
-  * @ignore
-  */
-module.exports = class SensorState {
+ * Internal state of the sensor.
+ *
+ * @ignore
+ */
+module.exports = class SensorState
+{
     constructor() {
         this.workingPeriod = undefined;
         this.mode = undefined;

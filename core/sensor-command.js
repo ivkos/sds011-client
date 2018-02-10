@@ -1,10 +1,11 @@
 /**
-  * Structure used to keep all data and functionality needed to run command and retry it if specified condition was not met.
-  * These commands will be sequentially processed  in "_processCommands()" method.
-  *
-  * @ignore
-  */
-module.exports = class SensorCommand {
+ * Structure used to keep all data and functionality needed to run command and retry it if specified condition was not met.
+ * These commands will be sequentially processed  in "_processCommands()" method.
+ *
+ * @ignore
+ */
+module.exports = class SensorCommand
+{
     constructor(sensor, successCallback, failureCallback, prepare, execute, isFullfilled) {
         this.sensor = sensor;
         this.successCallback = successCallback; // called when command was sent and confirmed - in most cases promise's resolve function

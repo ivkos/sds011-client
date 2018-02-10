@@ -2,7 +2,7 @@ module.exports = {};
 
 /**
  * 0xC0: PM2.5 and PM10 data
- * 
+ *
  * @param {Buffer} data
  * @param {SensorState} state
  */
@@ -32,34 +32,34 @@ module.exports.handle0xC5 = (data, state) => {
 
     switch (setting) {
         case 2: // Response to "get/set mode" command
-            {
-                const res = data.readUIntBE(4, 1);
-                state.mode = (res == 0 ? 'active' : 'query');
-            }
+        {
+            const res = data.readUIntBE(4, 1);
+            state.mode = (res == 0 ? 'active' : 'query');
+        }
             break;
 
         case 6: // Response to "get/set sleep mode" command
-            {
-                const res = data.readUIntBE(4, 1);
-                state.isSleeping = (res === 0);
-            }
+        {
+            const res = data.readUIntBE(4, 1);
+            state.isSleeping = (res === 0);
+        }
             break;
 
         case 7: // Response to "get firmware version" command
-            {
-                const year = data.readUIntBE(3, 1);
-                const month = data.readUIntBE(4, 1);
-                const day = data.readUIntBE(5, 1);
+        {
+            const year = data.readUIntBE(3, 1);
+            const month = data.readUIntBE(4, 1);
+            const day = data.readUIntBE(5, 1);
 
-                state.firmware = `${year}-${month}-${day}`;
-            }
+            state.firmware = `${year}-${month}-${day}`;
+        }
             break;
 
         case 8: // Response to "get/set working period" command
-            {
-                const res = data.readUIntBE(4, 1);
-                state.workingPeriod = res;
-            }
+        {
+            const res = data.readUIntBE(4, 1);
+            state.workingPeriod = res;
+        }
             break;
 
         default:

@@ -5,7 +5,6 @@ const rewire = require("rewire");
 const PacketUtils = rewire("../core/packet-utils.js");
 
 describe('Packet utiliites', function () {
-
     it('Rejects packet with wrong size - empty packet', function () {
         let buffer = new Buffer([]);
 
@@ -88,5 +87,4 @@ describe('Packet utiliites', function () {
 
         assert.equal(command[17], checksum);
     });
-
 });

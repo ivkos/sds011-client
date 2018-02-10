@@ -12,7 +12,8 @@ const PacketHandlers = require("./core/packet-handlers.js");
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request. 
 const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.
 
-class SDS011Client extends EventEmitter {
+class SDS011Client extends EventEmitter
+{
 
     /**
      * Open sensor.
@@ -34,8 +35,8 @@ class SDS011Client extends EventEmitter {
         });
 
         /**
-          * Listen for incoming data and react: change internal state so queued commands know that they were completed or emit data.
-          */
+         * Listen for incoming data and react: change internal state so queued commands know that they were completed or emit data.
+         */
         this._port.on('data', (data) => {
             if (verifyPacket(data)) {
                 const type = data.readUIntBE(1, 1); // Byte offset 1 is command type
@@ -62,8 +63,8 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Close open connection and cleanup.
-    */
+     * Close open connection and cleanup.
+     */
     close() {
         if (this._state.closed) {
             console.log('Sensor connection is already closed.');
@@ -77,13 +78,14 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Query sensor for it's latest reading. 
-    *
-    * @returns {Promise<object>} Resolved with PM2.5 and PM10 readings. May be rejected if sensor fails to respond after a number of internal retries.
-    */
+     * Query sensor for it's latest reading.
+     *
+     * @returns {Promise<object>} Resolved with PM2.5 and PM10 readings. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     query() {
         return this._enqueueQueryCommand(this._port, this._state);
     }
+
     _enqueueQueryCommand(port, state) {
         function prepare() {
             this.state.pm2p5 = undefined;
@@ -110,6 +112,7 @@ class SDS011Client extends EventEmitter {
         function isFullfilled() {
             return (this.state.pm2p5 !== undefined) && (this.state.pm10 !== undefined);
         }
+
         const isFullfilledContext = {
             state: state
         };
@@ -132,15 +135,16 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Set reporting mode. This setting is still effective after power off.
-    *
-    * @param {('active'|'query')} mode - active: data will be emitted as "data" event, query: new data has to requested manually @see query 
-    *
-    * @returns {Promise} Resolved when mode was set successfully. May be rejected if sensor fails to respond after a number of internal retries.
-    */
+     * Set reporting mode. This setting is still effective after power off.
+     *
+     * @param {('active'|'query')} mode - active: data will be emitted as "data" event, query: new data has to requested manually @see query
+     *
+     * @returns {Promise} Resolved when mode was set successfully. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     setReportingMode(mode) {
         return this._enqueueSetModeCommand(this._port, this._state, mode);
     }
+
     _enqueueSetModeCommand(port, state, mode) {
         if (mode !== 'active' && mode !== 'query')
             throw new Error('Invalid mode');
@@ -170,6 +174,7 @@ class SDS011Client extends EventEmitter {
         function isFullfilled() {
             return this.state.mode === this.setMode;
         }
+
         const isFullfilledContext = {
             state: this._state,
             setMode: mode
@@ -182,13 +187,14 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Get reporting mode.
-    *
-    * @returns {Promise} Resolved with either 'active' or 'query'. May be rejected if sensor fails to respond after a number of internal retries.
-    */
+     * Get reporting mode.
+     *
+     * @returns {Promise} Resolved with either 'active' or 'query'. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     getReportingMode() {
         return this._enqueueGetModeCommand(this._port, this._state);
     }
+
     _enqueueGetModeCommand(port, state) {
         function prepare() {
             this.state.mode = undefined;
@@ -214,6 +220,7 @@ class SDS011Client extends EventEmitter {
         function isFullfilled() {
             return this.state.mode != undefined;
         }
+
         const isFullfilledContext = {
             state: this._state
         };
@@ -233,15 +240,16 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Switch to sleep mode and back. Fan and laser will be turned off while in sleep mode. Any command will wake the device.
-    *
-    * @param {boolean} shouldSleep - whether device should sleep or not
-    *
-    * @returns {Promise} Resolved when operation completed successfully. May be rejected if sensor fails to respond after a number of internal retries.
-    */
+     * Switch to sleep mode and back. Fan and laser will be turned off while in sleep mode. Any command will wake the device.
+     *
+     * @param {boolean} shouldSleep - whether device should sleep or not
+     *
+     * @returns {Promise} Resolved when operation completed successfully. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     setSleepSetting(shouldSleep) {
         return this._enqueueSetSleepCommand(this._port, this._state, shouldSleep);
     }
+
     _enqueueSetSleepCommand(port, state, shouldSleep) {
         function prepare() {
             this.state.isSleeping = undefined;
@@ -268,6 +276,7 @@ class SDS011Client extends EventEmitter {
         function isFullfilled() {
             return this.state.isSleeping === this.shouldSleep;
         }
+
         const isFullfilledContext = {
             state: this._state,
             shouldSleep: shouldSleep
@@ -280,13 +289,14 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Read software version. It will be presented in "year-month-day" format.
-    *
-    * @returns {Promise<string>} - Resolved with sensor firmware version. May be rejected if sensor fails to respond after a number of internal retries.
-    */
+     * Read software version. It will be presented in "year-month-day" format.
+     *
+     * @returns {Promise<string>} - Resolved with sensor firmware version. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     getVersion() {
         return this._enqueueGetVersionCommand(this._port, this._state);
     }
+
     _enqueueGetVersionCommand(port, state) {
         function prepare() {
             this.state.firmware = undefined;
@@ -312,6 +322,7 @@ class SDS011Client extends EventEmitter {
         function isFullfilled() {
             return this.state.firmware !== undefined;
         }
+
         const isFullfilledContext = {
             state: this._state
         };
@@ -331,18 +342,19 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Set working period of the sensor. This setting is still effective after power off.
-    *
-    * @param {number} time - Working time (0 - 30 minutes). Sensor will work continuously when set to 0.
-    *
-    * @returns {Promise} Resolved when period was changed successfully. May be rejected if sensor fails to respond after a number of internal retries. 
-    */
+     * Set working period of the sensor. This setting is still effective after power off.
+     *
+     * @param {number} time - Working time (0 - 30 minutes). Sensor will work continuously when set to 0.
+     *
+     * @returns {Promise} Resolved when period was changed successfully. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     setWorkingPeriod(time) {
         if (time < 0 || time > 30)
             throw new Error('Invalid argument.');
 
         return this._enqueueSetWorkingPeriodCommand(this._port, this._state, time);
     }
+
     _enqueueSetWorkingPeriodCommand(port, state, time) {
         function prepare() {
             this.state.workingPeriod = undefined;
@@ -383,13 +395,14 @@ class SDS011Client extends EventEmitter {
     }
 
     /**
-    * Get current working period.
-    *
-    * @returns {Promise<Number>} Resolved with current period setting. May be rejected if sensor fails to respond after a number of internal retries. 
-    */
+     * Get current working period.
+     *
+     * @returns {Promise<Number>} Resolved with current period setting. May be rejected if sensor fails to respond after a number of internal retries.
+     */
     getWorkingPeriod() {
         return this._enqueueGetWorkingPeriodCommand(this._port, this._state);
     }
+
     _enqueueGetWorkingPeriodCommand(port, state) {
         function prepare() {
             this.state.workingPeriod = undefined;
