@@ -1,11 +1,11 @@
-const PacketUtils = require("./PacketUtils");
+const MessageUtils = require("./MessageUtils");
 const Constants = require("./Constants");
 
 class CommandBuilder
 {
     static makeCommand(sensorId, sender, type, mode, arg) {
         const buf = Buffer.alloc(19);
-        const idBuf = PacketUtils.calculateSensorIdBufFromString(sensorId);
+        const idBuf = MessageUtils.calculateSensorIdBufFromString(sensorId);
 
         buf[0] = Constants.MSG_HEAD;
 
@@ -17,7 +17,7 @@ class CommandBuilder
         buf[15] = idBuf[0];
         buf[16] = idBuf[1];
 
-        buf[17] = PacketUtils.calculateChecksum(buf, 2, 16);
+        buf[17] = MessageUtils.calculateChecksum(buf, 2, 16);
         buf[18] = Constants.MSG_TAIL;
 
         return buf;

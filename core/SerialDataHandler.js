@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const Constants = require("./Constants");
-const PacketUtils = require("./PacketUtils");
+const MessageUtils = require("./MessageUtils");
 
 class SerialDataHandler extends EventEmitter
 {
@@ -41,8 +41,8 @@ class SerialDataHandler extends EventEmitter
             this._buf.copy(msgBuf, 0, start, end + 1);
             this._trimBufLeft(10 + start);
 
-            if (!PacketUtils.verifyPacket(msgBuf)) {
-                const err = new Error("Received invalid packet");
+            if (!MessageUtils.isValidMessage(msgBuf)) {
+                const err = new Error("Received invalid message");
                 err.buf = msgBuf;
 
                 this.emit(Constants.EVENT_MESSAGE_ERROR, err);

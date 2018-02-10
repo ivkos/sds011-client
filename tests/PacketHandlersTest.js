@@ -9,7 +9,7 @@ describe('Packet handlers', function () {
         state = new SensorState(); // clear state for each run
     });
 
-    it('0xC0 handler: Returns correct values for packet', function () {
+    it('0xC0 handler: Returns correct values for message', function () {
         const input = Buffer.from([0xAA, 0xC0, 0x4B, 0x00, 0x51, 0x00, 0xE9, 0x77, 0xFC, 0xAB]);
 
         PacketHandlers.handle0xC0(input, state);

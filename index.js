@@ -444,7 +444,7 @@ class SDS011Client extends EventEmitter
                 break;
 
             default:
-                throw new Error('Unknown packet sender: ' + sender);
+                throw new Error('Unknown message sender: ' + sender);
         }
     }
 }
