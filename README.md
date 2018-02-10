@@ -51,3 +51,6 @@ sensor.on('measure', (data) => {
 - Check the 'examples' folder.
 - See the [API docs](https://github.com/triforcely/sds011-wrapper/wiki/API)
 
+## Contributors
+
+This project is based on the original work by [Michał Wilski](https://github.com/triforcely) - [SDS011-Wrapper](https://github.com/triforcely/sds011-wrapper).
