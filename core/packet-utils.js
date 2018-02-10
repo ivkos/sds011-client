@@ -1,3 +1,5 @@
+const Constants = require("./constants");
+
 /**
  * Calculates and updates checksum for outgoing packet.
  *
@@ -36,7 +38,7 @@ module.exports.verifyPacket = function (packet) {
  * @ignore
  */
 function verifyHeadAndTail(packet) {
-    return (packet[0] === 0xAA) && (packet[packet.length - 1] === 0xAB);
+    return (packet[0] === Constants.MSG_HEAD) && (packet[packet.length - 1] === Constants.MSG_TAIL);
 }
 
 /**

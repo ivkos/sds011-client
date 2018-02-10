@@ -1,3 +1,5 @@
+const Constants = require("./constants");
+
 module.exports = {};
 
 /**
@@ -21,19 +23,19 @@ module.exports.handle0xC5 = (data, state) => {
     const setting = data[2];
 
     switch (setting) {
-        case 2: // Response to "get/set mode" command
+        case Constants.CMD_PMU_MODE: // Response to "get/set mode" command
         {
             state.mode = (data[4] === 0 ? 'active' : 'query');
             break;
         }
 
-        case 6: // Response to "get/set sleep mode" command
+        case Constants.CMD_PMU_POWER: // Response to "get/set sleep mode" command
         {
             state.isSleeping = (data[4] === 0);
             break;
         }
 
-        case 7: // Response to "get firmware version" command
+        case Constants.CMD_FIRMWARE: // Response to "get firmware version" command
         {
             const year = padLeft(data[3], 2);
             const month = padLeft(data[4], 2);
@@ -43,7 +45,7 @@ module.exports.handle0xC5 = (data, state) => {
             break;
         }
 
-        case 8: // Response to "get/set working period" command
+        case Constants.CMD_PERIOD: // Response to "get/set working period" command
         {
             state.workingPeriod = data[4];
             break;
