@@ -44,7 +44,6 @@
     "serialport": "~5.0.0"
   },
   "devDependencies": {
-    "mocha": "~3.5.3",
-    "rewire": "~2.5.2"
+    "mocha": "~3.5.3"
   }
 }
