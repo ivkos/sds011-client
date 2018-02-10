@@ -2,7 +2,7 @@
   "name": "sds011-client",
   "version": "1.0.0",
   "description": "Client library created to simplify usage of SDS011 laser dust sensor in your projects",
-  "main": "client.js",
+  "main": "index.js",
   "scripts": {
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec tests && codecov"
   },
