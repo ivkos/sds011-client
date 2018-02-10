@@ -25,15 +25,15 @@ module.exports.handle0xC5 = (data, state) => {
         {
             const res = data[4];
             state.mode = (res == 0 ? 'active' : 'query');
-        }
             break;
+        }
 
         case 6: // Response to "get/set sleep mode" command
         {
             const res = data[4];
             state.isSleeping = (res === 0);
-        }
             break;
+        }
 
         case 7: // Response to "get firmware version" command
         {
@@ -42,14 +42,14 @@ module.exports.handle0xC5 = (data, state) => {
             const day = padLeft(data[5], 2);
 
             state.firmware = `${year}-${month}-${day}`;
-        }
             break;
+        }
 
         case 8: // Response to "get/set working period" command
         {
             state.workingPeriod = data[4];
-        }
             break;
+        }
 
         default:
             throw new Error(`Unhandled command: ${setting}`);
