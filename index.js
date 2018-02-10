@@ -7,9 +7,7 @@ const CommandBuilder = require("./core/command-builder");
 const Constants = require("./core/constants");
 const SerialMessageHandler = require('./core/serial-message-handler');
 const SensorReading = require('./core/sensor-reading');
-
-const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request. 
-const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.
+const CommandProcessor = require('./core/command-processor');
 
 class SDS011Client extends EventEmitter
 {
@@ -24,10 +22,7 @@ class SDS011Client extends EventEmitter
         this._port = new SerialPort(portPath, { baudRate: 9600 });
         this._state = new SensorState();
         this._serialMessageHandler = new SerialMessageHandler();
-
-        this._commandQueue = [];
-        this._isCurrentlyProcessing = false;
-        this._retryCount = 0;
+        this._commandProcessor = new CommandProcessor();
 
         this._port
             .on(Constants.EVENT_ERROR, err => this.emit(Constants.EVENT_ERROR, err))
@@ -54,7 +49,7 @@ class SDS011Client extends EventEmitter
 
         this._port.close();
         this._state.closed = true;
-        this._commandQueue.length = 0;
+        this._commandProcessor.clear();
         this.removeAllListeners();
     }
 
@@ -102,7 +97,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolveWithReadings.bind(resolveContext),
                 reject,
@@ -155,7 +150,7 @@ class SDS011Client extends EventEmitter
         };
 
         return new Promise((resolve, reject) => {
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolve,
                 reject,
@@ -209,7 +204,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolveWithMode.bind(resolveContext),
                 reject,
@@ -259,7 +254,7 @@ class SDS011Client extends EventEmitter
         };
 
         return new Promise((resolve, reject) => {
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolve,
                 reject,
@@ -313,7 +308,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolveWithFirmwareVersion.bind(resolveContext),
                 reject,
@@ -366,7 +361,7 @@ class SDS011Client extends EventEmitter
         };
 
         return new Promise((resolve, reject) => {
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolve,
                 reject,
@@ -420,7 +415,7 @@ class SDS011Client extends EventEmitter
                 state: state
             };
 
-            this._enqueueCommand(new SensorCommand(
+            this._commandProcessor.enqueue(new SensorCommand(
                 port,
                 resolveWithTime.bind(resolveContext),
                 reject,
@@ -429,58 +424,6 @@ class SDS011Client extends EventEmitter
                 isFullfilled.bind(isFullfilledContext)
             ));
         });
-    }
-
-    _enqueueCommand(command) {
-        if (command.constructor.name !== SensorCommand.name)
-            throw new Error(`Argument of type "${SensorCommand.name}" is required.`);
-
-        this._commandQueue.push(command);
-
-        if (!this._isCurrentlyProcessing) {
-            this._processCommands();
-        }
-    }
-
-    _processCommands() {
-        this._isCurrentlyProcessing = true;
-        const cmd = this._commandQueue[0];
-
-        // Run prepare command for the first execution of new command
-        if (this._retryCount === 0 && cmd !== undefined)
-            cmd.prepare();
-
-        // Reject command if it failed after defined number of retries
-        if (++this._retryCount > ALLOWED_RETRIES) {
-            const faultyCommand = this._commandQueue.shift();
-
-            faultyCommand.failureCallback(new Error("Command failed")); // Let the world know
-            this._retryCount = 0;
-
-            this._processCommands(); // Move to the next command
-            return;
-        }
-
-        if (this._commandQueue.length > 0) {
-            if (cmd.isFullfilled()) {
-
-                this._commandQueue.shift(); // Fully processed, remove from the queue.
-                this._retryCount = 0;
-
-                cmd.successCallback();
-
-                this._processCommands(); // Move to the next command
-            } else {
-                // Command completion condition was not met. Run command and run check after some time.
-
-                cmd.execute();
-                setTimeout(this._processCommands.bind(this), COMMAND_RETRY_INTERVAL);
-            }
-        } else {
-            // Processed all pending commands.
-            this._isCurrentlyProcessing = false;
-            this._retryCount = 0;
-        }
     }
 
     _handleMessage(buf) {
