@@ -6,6 +6,7 @@ const PacketHandlers = require("./core/packet-handlers.js");
 const CommandBuilder = require("./core/command-builder");
 const Constants = require("./core/constants");
 const PacketUtils = require("./core/packet-utils");
+const SensorReading = require('./core/sensor-reading');
 
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request. 
 const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.
@@ -41,9 +42,7 @@ class SDS011Client extends EventEmitter
                 switch (sender) {
                     case Constants.SENDER_SENSOR_READING:
                         PacketHandlers.handle0xC0(data, this._state);
-
-                        if (this._state.mode === 'active')
-                            this.emit('measure', { 'PM2.5': this._state.pm2p5, 'PM10': this._state.pm10 });
+                        this.emit('measure', new SensorReading(this._state.pm2p5, this._state.pm10));
                         break;
 
                     case Constants.SENDER_SENSOR_CONFIG:
@@ -112,10 +111,7 @@ class SDS011Client extends EventEmitter
 
         return new Promise((resolve, reject) => {
             function resolveWithReadings() {
-                resolve({
-                    'PM2.5': this.state.pm2p5,
-                    'PM10': this.state.pm10
-                });
+                resolve(new SensorReading(this.state.pm2p5, this.state.pm10));
             }
 
             const resolveContext = {
