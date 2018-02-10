@@ -489,7 +489,11 @@ class SDS011Client extends EventEmitter
         switch (sender) {
             case Constants.SENDER_SENSOR_READING:
                 PacketHandlers.handle0xC0(buf, this._state);
-                this.emit(Constants.EVENT_READING, new SensorReading(this._state.pm2p5, this._state.pm10));
+
+                if (this._state.pm2p5 > 0 && this._state.pm10 > 0) {
+                    this.emit(Constants.EVENT_READING, new SensorReading(this._state.pm2p5, this._state.pm10));
+                }
+
                 break;
 
             case Constants.SENDER_SENSOR_CONFIG:
