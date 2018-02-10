@@ -4,7 +4,7 @@ const PacketHandlers = require('../core/packet-handlers');
 
 describe('Packet handlers', function () {
 
-  var state;
+  let state;
 
   beforeEach(function () {
     state = new SensorState(); // clear state for each run

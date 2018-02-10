@@ -8,15 +8,15 @@ module.exports = {};
  */
 
 module.exports.handle0xC0 = (data, state) => {
-    var lowBytePm25 = data.readUIntBE(2, 1);
-    var highBytePm25 = data.readUIntBE(3, 1);
+    const lowBytePm25 = data.readUIntBE(2, 1);
+    const highBytePm25 = data.readUIntBE(3, 1);
 
-    var pm25 = ((highBytePm25 * 256) + lowBytePm25) / 10;
+    const pm25 = ((highBytePm25 * 256) + lowBytePm25) / 10;
 
-    var lowBytePm10 = data.readUIntBE(4, 1);
-    var highBytePm10 = data.readUIntBE(5, 1);
+    const lowBytePm10 = data.readUIntBE(4, 1);
+    const highBytePm10 = data.readUIntBE(5, 1);
 
-    var pm10 = ((highBytePm10 * 256) + lowBytePm10) / 10;
+    const pm10 = ((highBytePm10 * 256) + lowBytePm10) / 10;
 
     state.pm2p5 = pm25;
     state.pm10 = pm10;
@@ -28,7 +28,7 @@ module.exports.handle0xC0 = (data, state) => {
  * @param {SensorState} state
  */
 module.exports.handle0xC5 = (data, state) => {
-    var setting = data.readUIntBE(2, 1);
+    const setting = data.readUIntBE(2, 1);
 
     switch (setting) {
         case 2: // Response to "get/set mode" command

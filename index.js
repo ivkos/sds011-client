@@ -38,7 +38,7 @@ class SDS011Client extends EventEmitter {
           */
         this._port.on('data', (data) => {
             if (verifyPacket(data)) {
-                var type = data.readUIntBE(1, 1); // Byte offset 1 is command type
+                const type = data.readUIntBE(1, 1); // Byte offset 1 is command type
 
                 switch (type) {
                     case 0xC0:
@@ -95,7 +95,7 @@ class SDS011Client extends EventEmitter {
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -154,7 +154,7 @@ class SDS011Client extends EventEmitter {
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 2, 1, this.mode === 'active' ? 0 : 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -199,7 +199,7 @@ class SDS011Client extends EventEmitter {
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -252,7 +252,7 @@ class SDS011Client extends EventEmitter {
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 6, 1, shouldSleep ? 0 : 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -297,7 +297,7 @@ class SDS011Client extends EventEmitter {
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -348,12 +348,12 @@ class SDS011Client extends EventEmitter {
             this.state.workingPeriod = undefined;
         }
 
-        var prepareContext = {
+        const prepareContext = {
             state: state
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 8, 1, this.time, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -362,7 +362,7 @@ class SDS011Client extends EventEmitter {
             this.port.write(Buffer.from(command)); // Send the command to the sensor
         }
 
-        var executeContext = {
+        const executeContext = {
             port: port,
             time: time
         };
@@ -370,7 +370,8 @@ class SDS011Client extends EventEmitter {
         function isFullfilled() {
             return this.state.workingPeriod === this.setPeriod;
         }
-        var isFullfilledContext = {
+
+        const isFullfilledContext = {
             state: this._state,
             setPeriod: time
         };
@@ -394,12 +395,12 @@ class SDS011Client extends EventEmitter {
             this.state.workingPeriod = undefined;
         }
 
-        var prepareContext = {
+        const prepareContext = {
             state: state
         };
 
         function execute() {
-            var command = [
+            const command = [
                 0xAA, 0xB4, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0xAB
             ];
 
@@ -407,14 +408,15 @@ class SDS011Client extends EventEmitter {
             this.port.write(Buffer.from(command)); // Send the command to the sensor
         }
 
-        var executeContext = {
+        const executeContext = {
             port: port
         };
 
         function isFullfilled() {
             return this.state.workingPeriod !== undefined;
         }
-        var isFullfilledContext = {
+
+        const isFullfilledContext = {
             state: this._state
         };
 
