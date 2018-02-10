@@ -18,8 +18,25 @@ describe('Message handlers', function () {
         assert.equal(state.pm10, 8.1);
     });
 
+    it('0xC0 handler: Handles using generic handler', function () {
+        const input = Buffer.from([0xAA, 0xC0, 0x4B, 0x00, 0x51, 0x00, 0xE9, 0x77, 0xFC, 0xAB]);
+
+        MessageHandlerUtils.handle(input, state);
+
+        assert.equal(state.pm2p5, 7.5);
+        assert.equal(state.pm10, 8.1);
+    });
+
 
     it('0xC5 handler: Handles response to get/set mode command - query', function () {
+        const input = Buffer.from([0xAA, 0xC5, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xAB]);
+
+        MessageHandlerUtils.handleConfig(input, state);
+
+        assert.equal(state.mode, 'query');
+    });
+
+    it('0xC5 handler: Handles using generic handler', function () {
         const input = Buffer.from([0xAA, 0xC5, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xAB]);
 
         MessageHandlerUtils.handleConfig(input, state);
@@ -80,6 +97,16 @@ describe('Message handlers', function () {
 
         function shouldFail() {
             MessageHandlerUtils.handleConfig(input, state);
+        }
+
+        assert.throws(shouldFail, Error);
+    });
+
+    it('Generic handler throws on unknown code', function () {
+        const input = Buffer.from([0xAA, 0xF0, 0x30, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0xAB]);
+
+        function shouldFail() {
+            MessageHandlerUtils.handle(input, state);
         }
 
         assert.throws(shouldFail, Error);
