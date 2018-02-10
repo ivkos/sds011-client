@@ -432,8 +432,8 @@ class SDS011Client extends EventEmitter
     }
 
     _enqueueCommand(command) {
-        if (command.constructor.name !== 'SensorCommand')
-            throw new Error('Argument of type "SensorCommand" is required.');
+        if (command.constructor.name !== SensorCommand.name)
+            throw new Error(`Argument of type "${SensorCommand.name}" is required.`);
 
         this._commandQueue.push(command);
 
