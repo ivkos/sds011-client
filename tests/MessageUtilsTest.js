@@ -1,7 +1,7 @@
 const assert = require('assert');
 const MessageUtils = require("../core/MessageUtils.js");
 
-describe('Packet utiliites', function () {
+describe('Message utiliites', function () {
     it('Rejects message with wrong size - empty message', function () {
         let buffer = new Buffer([]);
 

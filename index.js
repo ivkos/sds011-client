@@ -2,7 +2,7 @@ const SerialPort = require('serialport');
 const EventEmitter = require('events');
 const SensorState = require("./core/SensorState.js");
 const SensorCommand = require("./core/SensorCommand.js");
-const PacketHandlers = require("./core/PacketHandler.js");
+const MessageHandlerUtils = require("./core/MessageHandlerUtils.js");
 const CommandBuilder = require("./core/CommandBuilder");
 const Constants = require("./core/Constants");
 const SerialDataHandler = require('./core/SerialDataHandler');
@@ -426,25 +426,15 @@ class SDS011Client extends EventEmitter
         });
     }
 
-    _handleMessage(buf) {
-        const sender = buf[1];
+    _handleMessage(message) {
+        const sender = message[1];
+        MessageHandlerUtils.handle(message, this._state);
 
-        switch (sender) {
-            case Constants.SENDER_SENSOR_READING:
-                PacketHandlers.handle0xC0(buf, this._state);
-
-                if (this._state.pm2p5 > 0 && this._state.pm10 > 0) {
-                    this.emit(Constants.EVENT_READING, new SensorReading(this._state.pm2p5, this._state.pm10));
-                }
-
-                break;
-
-            case Constants.SENDER_SENSOR_CONFIG:
-                PacketHandlers.handle0xC5(buf, this._state);
-                break;
-
-            default:
-                throw new Error('Unknown message sender: ' + sender);
+        if (sender === Constants.SENDER_SENSOR_READING) {
+            const isSensibleReading = this._state.pm2p5 > 0 && this._state.pm10 > 0;
+            if (isSensibleReading) {
+                this.emit(Constants.EVENT_READING, new SensorReading(this._state.pm2p5, this._state.pm10));
+            }
         }
     }
 }
