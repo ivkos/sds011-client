@@ -24,7 +24,7 @@ module.exports.addChecksumToCommandArray = function addChecksumToCommandArray(co
  * @ignore
  */
 module.exports.verifyPacket = function (packet) {
-    if (packet.length != 10)
+    if (packet.length !== 10)
         return false;
 
     if (!verifyHeaderAndTail(packet))
@@ -46,7 +46,7 @@ function verifyHeaderAndTail(packet) {
     const header = packet[0];
     const tail = packet[packet.length - 1];
 
-    return (header == 0xAA) && (tail == 0xAB);
+    return (header === 0xAA) && (tail === 0xAB);
 }
 
 /**

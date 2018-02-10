@@ -45,7 +45,7 @@ class SDS011Client extends EventEmitter
                     case 0xC0:
                         PacketHandlers.handle0xC0(data, this._state);
 
-                        if (this._state.mode == 'active')
+                        if (this._state.mode === 'active')
                             this.emit('measure', { 'PM2.5': this._state.pm2p5, 'PM10': this._state.pm10 });
                         break;
 
@@ -218,7 +218,7 @@ class SDS011Client extends EventEmitter
         };
 
         function isFullfilled() {
-            return this.state.mode != undefined;
+            return this.state.mode !== undefined;
         }
 
         const isFullfilledContext = {
@@ -463,7 +463,7 @@ class SDS011Client extends EventEmitter
         const cmd = this._commandQueue[0];
 
         // Run prepare command for the first execution of new command
-        if (this._retryCount == 0 && cmd !== undefined)
+        if (this._retryCount === 0 && cmd !== undefined)
             cmd.prepare();
 
         // Reject command if it failed after defined number of retries

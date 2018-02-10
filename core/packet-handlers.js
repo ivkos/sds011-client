@@ -24,7 +24,7 @@ module.exports.handle0xC5 = (data, state) => {
         case 2: // Response to "get/set mode" command
         {
             const res = data[4];
-            state.mode = (res == 0 ? 'active' : 'query');
+            state.mode = (res === 0 ? 'active' : 'query');
             break;
         }
 
