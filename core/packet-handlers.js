@@ -37,9 +37,9 @@ module.exports.handle0xC5 = (data, state) => {
 
         case 7: // Response to "get firmware version" command
         {
-            const year = data[3];
-            const month = data[4];
-            const day = data[5];
+            const year = padLeft(data[3], 2);
+            const month = padLeft(data[4], 2);
+            const day = padLeft(data[5], 2);
 
             state.firmware = `${year}-${month}-${day}`;
         }
@@ -55,3 +55,9 @@ module.exports.handle0xC5 = (data, state) => {
             throw new Error(`Unhandled command: ${setting}`);
     }
 };
+
+function padLeft(x, desiredSize, padding = "0") {
+    return Array.from(Array(Math.max(0, desiredSize - String(x).length)), () => padding)
+        .concat(Array.from(String(x)))
+        .join("");
+}
