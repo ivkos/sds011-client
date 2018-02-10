@@ -30,13 +30,14 @@ class SDS011Client extends EventEmitter
         this._retryCount = 0;
 
         this._port
-            .on('error', err => this.emit('error', err))
+            .on(Constants.EVENT_ERROR, err => this.emit(Constants.EVENT_ERROR, err))
+            .on('data', buf => this.emit(Constants.EVENT_SERIAL_DATA, buf))
             .on('data', buf => this._serialMessageHandler.push(buf));
 
         this._serialMessageHandler
-            .on('message', buf => this._handleMessage(buf))
-            .on('message', buf => this.emit('message', buf))
-            .on('message_error', err => this.emit('message_error', err));
+            .on(Constants.EVENT_MESSAGE, buf => this.emit(Constants.EVENT_MESSAGE, buf))
+            .on(Constants.EVENT_MESSAGE, buf => this._handleMessage(buf))
+            .on(Constants.EVENT_MESSAGE_ERROR, err => this.emit(Constants.EVENT_MESSAGE_ERROR, err));
 
         // Queue first command to "warm-up" the connection and command queue
         this.query();
@@ -488,7 +489,7 @@ class SDS011Client extends EventEmitter
         switch (sender) {
             case Constants.SENDER_SENSOR_READING:
                 PacketHandlers.handle0xC0(buf, this._state);
-                this.emit('reading', new SensorReading(this._state.pm2p5, this._state.pm10));
+                this.emit(Constants.EVENT_READING, new SensorReading(this._state.pm2p5, this._state.pm10));
                 break;
 
             case Constants.SENDER_SENSOR_CONFIG:

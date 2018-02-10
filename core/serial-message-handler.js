@@ -45,12 +45,12 @@ class SerialMessageHandler extends EventEmitter
                 const err = new Error("Received invalid packet");
                 err.buf = msgBuf;
 
-                this.emit('packet_error', err);
+                this.emit(Constants.EVENT_MESSAGE_ERROR, err);
 
                 continue;
             }
 
-            this.emit('message', msgBuf);
+            this.emit(Constants.EVENT_MESSAGE, msgBuf);
         }
     }
 

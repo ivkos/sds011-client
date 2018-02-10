@@ -14,5 +14,10 @@ module.exports = Object.freeze({
 
     MODE_GET: 0x0,
     MODE_SET: 0x1,
-    MODE_FF: 0xFF
+
+    EVENT_ERROR: "error",
+    EVENT_MESSAGE: "message",
+    EVENT_READING: "reading",
+    EVENT_SERIAL_DATA: "serial_data",
+    EVENT_MESSAGE_ERROR: "message_error"
 });
