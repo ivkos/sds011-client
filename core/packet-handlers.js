@@ -8,18 +8,8 @@ module.exports = {};
  */
 
 module.exports.handle0xC0 = (data, state) => {
-    const lowBytePm25 = data.readUIntBE(2, 1);
-    const highBytePm25 = data.readUIntBE(3, 1);
-
-    const pm25 = ((highBytePm25 * 256) + lowBytePm25) / 10;
-
-    const lowBytePm10 = data.readUIntBE(4, 1);
-    const highBytePm10 = data.readUIntBE(5, 1);
-
-    const pm10 = ((highBytePm10 * 256) + lowBytePm10) / 10;
-
-    state.pm2p5 = pm25;
-    state.pm10 = pm10;
+    state.pm2p5 = ((data[3] * 256) + data[2]) / 10;
+    state.pm10 = ((data[5] * 256) + data[4]) / 10;
 };
 
 /**
@@ -28,28 +18,28 @@ module.exports.handle0xC0 = (data, state) => {
  * @param {SensorState} state
  */
 module.exports.handle0xC5 = (data, state) => {
-    const setting = data.readUIntBE(2, 1);
+    const setting = data[2];
 
     switch (setting) {
         case 2: // Response to "get/set mode" command
         {
-            const res = data.readUIntBE(4, 1);
+            const res = data[4];
             state.mode = (res == 0 ? 'active' : 'query');
         }
             break;
 
         case 6: // Response to "get/set sleep mode" command
         {
-            const res = data.readUIntBE(4, 1);
+            const res = data[4];
             state.isSleeping = (res === 0);
         }
             break;
 
         case 7: // Response to "get firmware version" command
         {
-            const year = data.readUIntBE(3, 1);
-            const month = data.readUIntBE(4, 1);
-            const day = data.readUIntBE(5, 1);
+            const year = data[3];
+            const month = data[4];
+            const day = data[5];
 
             state.firmware = `${year}-${month}-${day}`;
         }
@@ -57,8 +47,7 @@ module.exports.handle0xC5 = (data, state) => {
 
         case 8: // Response to "get/set working period" command
         {
-            const res = data.readUIntBE(4, 1);
-            state.workingPeriod = res;
+            state.workingPeriod = data[4];
         }
             break;
 

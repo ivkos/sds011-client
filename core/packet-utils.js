@@ -43,8 +43,8 @@ module.exports.verifyPacket = function (packet) {
  * @ignore
  */
 function verifyHeaderAndTail(packet) {
-    const header = packet.readUIntBE(0, 1);
-    const tail = packet.readUIntBE(packet.length - 1, 1);
+    const header = packet[0];
+    const tail = packet[packet.length - 1];
 
     return (header == 0xAA) && (tail == 0xAB);
 }
@@ -59,11 +59,11 @@ function verifyHeaderAndTail(packet) {
  * @ignore
  */
 function isChecksumValid(packet, checksumByteOffset, dataStartOffset, dataEndOffset) {
-    const targetChecksum = packet.readUIntBE(checksumByteOffset, 1);
+    const targetChecksum = packet[checksumByteOffset];
     let calculatedChecksum = 0;
 
     for (let i = dataStartOffset; i <= dataEndOffset; i++) {
-        calculatedChecksum += packet.readUIntBE(i, 1);
+        calculatedChecksum += packet[i];
     }
 
     calculatedChecksum = calculatedChecksum % 256;

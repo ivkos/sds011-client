@@ -39,7 +39,7 @@ class SDS011Client extends EventEmitter
          */
         this._port.on('data', (data) => {
             if (verifyPacket(data)) {
-                const type = data.readUIntBE(1, 1); // Byte offset 1 is command type
+                const type = data[1]; // Byte offset 1 is command type
 
                 switch (type) {
                     case 0xC0:
