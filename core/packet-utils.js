@@ -20,7 +20,7 @@ module.exports.verifyPacket = function (packet) {
     if (packet.length !== 10)
         return false;
 
-    if (!verifyHeaderAndTail(packet))
+    if (!verifyHeadAndTail(packet))
         return false;
 
     if (!isChecksumValid(packet, 8, 2, 7))
@@ -30,16 +30,13 @@ module.exports.verifyPacket = function (packet) {
 }
 
 /**
- * Check if given packet begins with correct header and ends with correct tail.
+ * Check if given packet begins with correct head and ends with correct tail.
  *
  * @param {Buffer} packet
  * @ignore
  */
-function verifyHeaderAndTail(packet) {
-    const header = packet[0];
-    const tail = packet[packet.length - 1];
-
-    return (header === 0xAA) && (tail === 0xAB);
+function verifyHeadAndTail(packet) {
+    return (packet[0] === 0xAA) && (packet[packet.length - 1] === 0xAB);
 }
 
 /**

@@ -13,7 +13,7 @@ describe('Packet utiliites', function () {
         assert.equal(res, false);
     });
 
-    it('Rejects packet - invalid tail and header', function () {
+    it('Rejects packet - invalid head and tail', function () {
         let buffer = Buffer.from([0x00, 0xC0, 0x4B, 0x00, 0x51, 0x00, 0xE9, 0x77, 0xFC, 0x00]);
 
         let res = PacketUtils.verifyPacket(buffer);
@@ -21,7 +21,7 @@ describe('Packet utiliites', function () {
         assert.equal(res, false);
     });
 
-    it('Accepts packet - valid tail and header', function () {
+    it('Accepts packet - valid head and tail', function () {
         let buffer = Buffer.from([0xAA, 0xC0, 0x4B, 0x00, 0x51, 0x00, 0xE9, 0x77, 0xFC, 0xAB]);
 
         let res = PacketUtils.verifyPacket(buffer);
@@ -45,18 +45,18 @@ describe('Packet utiliites', function () {
         assert.equal(res, true);
     });
 
-    it('Checks for header and tail - when packet is valid', function () {
+    it('Checks for head and tail - when packet is valid', function () {
         let buffer = Buffer.from([0xAA, 0xC0, 0x4B, 0x00, 0x51, 0x00, 0xE9, 0x77, 0xFC, 0xAB]);
 
-        let res = PacketUtils.__get__("verifyHeaderAndTail")(buffer);
+        let res = PacketUtils.__get__("verifyHeadAndTail")(buffer);
 
         assert.equal(res, true);
     });
 
-    it('Checks for header and tail - when packet is invalid', function () {
+    it('Checks for head and tail - when packet is invalid', function () {
         let buffer = Buffer.from([0x00, 0xC0, 0x4B, 0x13]);
 
-        let res = PacketUtils.__get__("verifyHeaderAndTail")(buffer);
+        let res = PacketUtils.__get__("verifyHeadAndTail")(buffer);
 
         assert.equal(res, false);
     });
