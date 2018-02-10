@@ -1,5 +1,5 @@
 const assert = require('assert');
-const SensorState = require('../core/sensor-state')
+const SensorState = require('../core/sensor-state');
 const PacketHandlers = require('../core/packet-handlers');
 
 describe('Packet handlers', function () {

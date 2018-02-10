@@ -14,4 +14,4 @@ module.exports = class SensorCommand
         this.execute = execute; // do the actual work - build binary command and send it to the sensor
         this.isFullfilled = isFullfilled; // if this function returns 'false' the command will be retried - up to ${ALLOWED_RETRIES} times. Mostly watches internal state for changes.
     }
-}
+};

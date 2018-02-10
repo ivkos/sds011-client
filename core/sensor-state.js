@@ -14,4 +14,4 @@ module.exports = class SensorState
         this.pm10 = undefined;
         this.closed = false;
     }
-}
+};
