@@ -60,3 +60,5 @@ typings/
 #visual studio files
 .vs/
 
+# jetbrains
+.idea/
