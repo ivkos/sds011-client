@@ -1,4 +1,4 @@
-const Sensor = require('../index.js');
+const Sensor = require('../core/SDS011Client.js');
 
 const sensor = new Sensor("COM5"); // Use your system path of SDS011 sensor.
 
