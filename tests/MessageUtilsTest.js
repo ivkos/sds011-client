@@ -1,5 +1,5 @@
 const assert = require('assert');
-const MessageUtils = require("../src/MessageUtils.js");
+const MessageUtils = require("../src/core/MessageUtils.js");
 
 describe('Message utiliites', function () {
     it('Rejects message with wrong size - empty message', function () {

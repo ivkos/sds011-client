@@ -1,13 +1,13 @@
 const SerialPort = require('serialport');
 const EventEmitter = require('events');
-const SensorState = require("./SensorState.js");
-const SensorCommand = require("./SensorCommand.js");
-const MessageHandlerUtils = require("./MessageHandlerUtils.js");
-const CommandBuilder = require("./CommandBuilder");
-const Constants = require("./Constants");
-const SerialDataHandler = require('./SerialDataHandler');
-const SensorReading = require('./SensorReading');
-const SensorCommandProcessor = require('./SensorCommandProcessor');
+const SensorState = require("./util/SensorState.js");
+const SensorCommand = require("./util/SensorCommand.js");
+const MessageHandlerUtils = require("./core/MessageHandlerUtils.js");
+const CommandBuilder = require("./core/CommandBuilder");
+const Constants = require("./util/Constants");
+const SerialDataHandler = require('./core/SerialDataHandler');
+const SensorReading = require('./util/SensorReading');
+const SensorCommandProcessor = require('./core/SensorCommandProcessor');
 
 class SDS011Client extends EventEmitter
 {

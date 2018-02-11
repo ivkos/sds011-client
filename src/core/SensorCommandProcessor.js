@@ -1,4 +1,4 @@
-const SensorCommand = require('./SensorCommand');
+const SensorCommand = require('../util/SensorCommand');
 
 const ALLOWED_RETRIES = 10; // Number of retries allowed for single command request.
 const COMMAND_RETRY_INTERVAL = 150; // Time between sequential retries.

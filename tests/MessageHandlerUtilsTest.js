@@ -1,6 +1,6 @@
 const assert = require('assert');
-const SensorState = require('../src/SensorState');
-const MessageHandlerUtils = require('../src/MessageHandlerUtils');
+const SensorState = require('../src/util/SensorState');
+const MessageHandlerUtils = require('../src/core/MessageHandlerUtils');
 
 describe('Message handlers', function () {
     let state;
