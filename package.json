@@ -1,6 +1,6 @@
 {
   "name": "sds011-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Client library created to simplify usage of SDS011 laser dust sensor in your projects",
   "main": "index.js",
   "scripts": {
