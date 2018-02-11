@@ -1,1 +1,1 @@
-module.exports = require('./core/SDS011Client');
+module.exports = require('./src/SDS011Client');
