@@ -22,7 +22,11 @@ class SDS011Client extends EventEmitter
         this._state = new SensorState();
         this._serialDataHandler = new SerialDataHandler();
         this._commandProcessor = new SensorCommandProcessor();
-        this._enqueueableCommandsHolder = new EnqueueableCommandsHolder(this._commandProcessor, this._state);
+        this._enqueueableCommandsHolder = new EnqueueableCommandsHolder(
+            this._commandProcessor,
+            this._state,
+            this._port
+        );
 
         this._attachListeners();
 
@@ -51,7 +55,7 @@ class SDS011Client extends EventEmitter
      * @returns {Promise<object>} Resolved with PM2.5 and PM10 readings. May be rejected if sensor fails to respond after a number of internal retries.
      */
     query() {
-        return this._enqueueableCommandsHolder.enqueueQueryCommand(this._port, this._state);
+        return this._enqueueableCommandsHolder.enqueueQueryCommand();
     }
 
 
@@ -63,7 +67,7 @@ class SDS011Client extends EventEmitter
      * @returns {Promise} Resolved when mode was set successfully. May be rejected if sensor fails to respond after a number of internal retries.
      */
     setReportingMode(mode) {
-        return this._enqueueableCommandsHolder.enqueueSetModeCommand(this._port, this._state, mode);
+        return this._enqueueableCommandsHolder.enqueueSetModeCommand(mode);
     }
 
     /**
@@ -72,7 +76,7 @@ class SDS011Client extends EventEmitter
      * @returns {Promise} Resolved with either 'active' or 'query'. May be rejected if sensor fails to respond after a number of internal retries.
      */
     getReportingMode() {
-        return this._enqueueableCommandsHolder.enqueueGetModeCommand(this._port, this._state);
+        return this._enqueueableCommandsHolder.enqueueGetModeCommand();
     }
 
 
@@ -94,7 +98,7 @@ class SDS011Client extends EventEmitter
      * @returns {Promise<string>} - Resolved with sensor firmware version. May be rejected if sensor fails to respond after a number of internal retries.
      */
     getVersion() {
-        return this._enqueueableCommandsHolder.enqueueGetVersionCommand(this._port, this._state);
+        return this._enqueueableCommandsHolder.enqueueGetVersionCommand();
     }
 
 
@@ -118,7 +122,7 @@ class SDS011Client extends EventEmitter
      * @returns {Promise<Number>} Resolved with current period setting. May be rejected if sensor fails to respond after a number of internal retries.
      */
     getWorkingPeriod() {
-        return this._enqueueableCommandsHolder.enqueueGetWorkingPeriodCommand(this._port, this._state);
+        return this._enqueueableCommandsHolder.enqueueGetWorkingPeriodCommand();
     }
 
     /**
